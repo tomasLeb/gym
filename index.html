@@ -144,18 +144,15 @@ function getPrev(wo,eid){
 const weeks=Object.keys(state.data).sort().reverse();
 for(const w of weeks){if(w===state.week)continue;const v=state.data[w]?.[wo]?.[eid]?.[0];if(v)return{weight:v,week:w}}return null
 }
-function getModeWeight(wo,eid){
-const weeks=Object.keys(state.data).sort().reverse();const allW=[];
-for(const w of weeks){if(w===state.week)continue;if(allW.length>=20)break;
+function getSuggestedWeight(wo,eid){
+const weeks=Object.keys(state.data).sort().reverse();
+for(const w of weeks){if(w===state.week)continue;
 const sets=state.data[w]?.[wo]?.[eid];if(sets){
-Object.entries(sets).filter(([k])=>!k.startsWith("r")).forEach(([,v])=>{const n=parseFloat(v);if(!isNaN(n)&&n>0)allW.push(n)})}}
-if(allW.length===0)return null;
-const freq={};allW.forEach(v=>{freq[v]=(freq[v]||0)+1});
-let mode=allW[0],maxF=0;Object.entries(freq).forEach(([v,f])=>{if(f>maxF){maxF=f;mode=parseFloat(v)}});
-return mode}
+const v=parseFloat(sets[0]);if(!isNaN(v)&&v>0)return v}}
+return null}
 function autoFill(wo,eid,sets){
-const mode=getModeWeight(wo,eid);if(!mode)return;
-for(let i=0;i<sets;i++){if(!state.data[state.week]?.[wo]?.[eid]?.[i]){setVal(state.week,wo,eid,i,String(mode),"w")}}
+const sug=getSuggestedWeight(wo,eid);if(!sug)return;
+for(let i=0;i<sets;i++){if(!state.data[state.week]?.[wo]?.[eid]?.[i]){setVal(state.week,wo,eid,i,String(sug),"w")}}
 }
 function getProgress(wo,eid){
 const weeks=Object.keys(state.data).sort();const pts=[];
@@ -220,19 +217,19 @@ return`
 <h2>${r.day}</h2></div>
 <p class="wl mono">${fmtWeek(state.week)}</p></div>
 ${r.exercises.map(ex=>{
-const prev=getPrev(wo,ex.id);const mode=getModeWeight(wo,ex.id);
+const prev=getPrev(wo,ex.id);const sug=getSuggestedWeight(wo,ex.id);
 const hasData=wd?.[ex.id]&&Object.entries(wd[ex.id]).filter(([k])=>!k.startsWith("r")).some(([,v])=>v>0);
 return`<div class="ex-card">
 <div class="ex-top"><span class="ex-name">${ex.name}</span>
 <div style="display:flex;gap:6px">
-${mode&&!hasData?`<button class="prog-btn" onclick="autoFill('${wo}','${ex.id}',${ex.sets})" style="font-size:11px;color:var(--accent);padding:4px 8px" title="Rellenar con ${mode}kg">↓ ${mode}kg</button>`:""}
+${sug&&!hasData?`<button class="prog-btn" onclick="autoFill('${wo}','${ex.id}',${ex.sets})" style="font-size:11px;color:var(--accent);padding:4px 8px" title="Rellenar con ${sug}kg">↓ ${sug}kg</button>`:""}
 <button class="prog-btn" onclick="openProg('${wo}','${ex.id}')">📈</button></div></div>
 <div class="ex-meta"><span>${ex.sets}×${ex.reps}</span>${prev?`<span class="prev mono">Anterior: ${prev.weight}kg</span>`:""}</div>
 <div>${Array.from({length:ex.sets}).map((_,i)=>{
 const wv=wd?.[ex.id]?.[i]||"";const rv=wd?.[ex.id]?.[`r${i}`]||"";
 return`<div class="set-row">
 <span class="set-label mono">S${i+1}</span>
-<input class="kg mono" type="number" inputmode="decimal" placeholder="${mode?mode+"kg":"kg"}" value="${wv}"
+<input class="kg mono" type="number" inputmode="decimal" placeholder="${sug?sug+"kg":"kg"}" value="${wv}"
 onchange="setVal('${state.week}','${wo}','${ex.id}',${i},this.value,'w')">
 <input class="rp mono" type="number" inputmode="numeric" placeholder="reps" value="${rv}"
 onchange="setVal('${state.week}','${wo}','${ex.id}',${i},this.value,'r')">
