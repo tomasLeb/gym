@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e0e11">
+<title>Recetas · Capsule Pantry</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0e11;--card:#18181c;--card2:#1f1f25;--accent:#7aad6a;--accent2:#c8a862;--text:#e8e4dc;--dim:#8a8680;--border:#2a2a30;--bfast:#ad8aad;--quick:#6a8aad;--elab:#ad9a6a;--cheat:#c87a5a;--prot:#ad7a7a}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono',monospace}
+.app{max-width:700px;margin:0 auto;padding:16px 16px 80px}
+header{text-align:center;padding:32px 0 16px;border-bottom:1px solid var(--border);margin-bottom:16px}
+header h1{font-size:1.6rem;font-weight:800;letter-spacing:-0.03em;background:linear-gradient(135deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+header p{font-size:.8rem;color:var(--dim);font-weight:300;margin-top:6px;line-height:1.5}
+.tabs{display:flex;margin-bottom:18px;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.tab{flex:1;text-align:center;padding:12px 8px;font-size:.78rem;font-weight:600;cursor:pointer;color:var(--dim);border:none;background:none;font-family:'Outfit',sans-serif;transition:all .15s}
+.tab.active{color:var(--accent);background:var(--card2);box-shadow:inset 0 -2px 0 var(--accent)}
+.tab:active{background:var(--card2)}
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.fbtn{font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:600;padding:6px 11px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer}
+.fbtn:active{transform:scale(.95)}
+.fbtn.active{color:var(--text);background:var(--card2);border-color:#444}
+.recipe{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden}
+.recipe.hidden{display:none}
+.rh{padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:8px}
+.rh:active{background:var(--card2)}
+.rtag{font-size:.55rem;font-weight:700;padding:3px 6px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.rtag-bfast{background:rgba(173,138,173,.1);color:var(--bfast);border:1px solid rgba(173,138,173,.2)}
+.rtag-quick{background:rgba(106,138,173,.1);color:var(--quick);border:1px solid rgba(106,138,173,.2)}
+.rtag-elab{background:rgba(173,154,106,.1);color:var(--elab);border:1px solid rgba(173,154,106,.2)}
+.rtag-cheat{background:rgba(200,122,90,.1);color:var(--cheat);border:1px solid rgba(200,122,90,.2)}
+.rn{font-size:.88rem;font-weight:700;flex:1}
+.rm{display:flex;gap:8px;font-size:.62rem}
+.rt{color:var(--dim)}
+.rp{color:var(--prot);font-weight:600}
+.ra{font-size:.8rem;color:var(--dim);transition:transform .2s}
+.recipe.open .ra{transform:rotate(90deg)}
+.rb{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
+.recipe.open .rb{display:block}
+.rs{margin-top:10px}
+.rl{font-size:.67rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.rlist{font-size:.77rem;color:var(--dim);font-weight:300;line-height:1.8;padding:0}
+.rlist li{list-style:none}
+.rlist li::before{content:"· ";color:var(--accent)}
+.rsteps{counter-reset:step}
+.rsteps li{padding-left:20px;position:relative;margin-bottom:3px}
+.rsteps li::before{content:counter(step);counter-increment:step;position:absolute;left:0;color:var(--accent2);font-weight:700;font-size:.7rem}
+.rpd{display:flex;gap:16px;margin-top:8px;padding:8px 10px;background:var(--bg);border-radius:6px;border:1px solid var(--border)}
+.rpd div{font-size:.7rem}
+.rpd .pn{color:var(--dim);font-weight:300}
+.rpd .pv{color:var(--prot);font-weight:700;font-size:.82rem}
+.rtip{margin-top:8px;font-size:.72rem;color:var(--accent);font-weight:300;font-style:italic;padding:7px 10px;background:rgba(122,173,106,.05);border-radius:6px;border:1px solid rgba(122,173,106,.1)}
+.gen-btn{width:100%;padding:14px;background:linear-gradient(135deg,#2a3a28,#1a2a18);border:1px solid rgba(122,173,106,.3);border-radius:10px;color:var(--accent);font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;margin-bottom:16px}
+.gen-btn:active{transform:scale(.98)}
+.ptotals{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.ptotals .pt{text-align:center}
+.ptotals .ptv{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.ptotals .ptl{font-size:.63rem;color:var(--dim);margin-top:2px}
+.pday{margin-bottom:18px}
+.pdh{font-size:.9rem;font-weight:700;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:6px;display:flex;justify-content:space-between}
+.pdh .dn{color:var(--text)}
+.pdh .dp{font-size:.68rem;color:var(--dim);font-weight:400}
+.pm{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:5px}
+.pm .pmt{font-size:.57rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;min-width:52px}
+.pm .pmn{font-size:.8rem;font-weight:600;flex:1}
+.pm .pmp{font-size:.63rem;color:var(--prot);font-weight:600}
+.pms{background:none;border:1px solid var(--border);border-radius:4px;padding:2px 6px;cursor:pointer;font-size:.68rem;color:var(--dim);font-family:'Outfit',sans-serif}
+.pms:active{background:var(--card2)}
+.shop{margin-top:20px;padding:18px;background:var(--card);border:1px solid var(--border);border-radius:12px}
+.shop h3{font-size:.88rem;font-weight:700;color:var(--accent2);margin-bottom:12px}
+.scat{margin-bottom:12px}
+.scat h4{font-size:.73rem;font-weight:600;color:var(--accent);margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid var(--border)}
+.scat li{font-size:.76rem;color:var(--dim);font-weight:300;line-height:1.7;list-style:none}
+.scat li::before{content:"· ";color:var(--accent)}
+.scat .sq{color:var(--accent2);font-weight:500}
+.sbase{margin-top:10px;font-size:.72rem;color:var(--dim);font-weight:300;padding:10px;background:var(--bg);border-radius:6px;border:1px solid var(--border)}
+.sbase b{color:var(--accent2)}
+.pantry{padding:18px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-top:18px}
+.pantry h3{font-size:.88rem;font-weight:700;margin-bottom:10px;color:var(--accent)}
+.pantry p{font-size:.76rem;color:var(--dim);font-weight:300;margin-bottom:12px}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pcol h4{font-size:.72rem;font-weight:600;color:var(--accent2);margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid var(--border)}
+.pcol li{font-size:.74rem;color:var(--dim);font-weight:300;line-height:1.6;list-style:none}
+.pcol li::before{content:"· ";color:var(--accent)}
+footer{text-align:center;padding:28px 0 16px;font-size:.68rem;color:var(--dim);font-weight:300}
+@media(max-width:480px){.app{padding:12px 12px 60px}header h1{font-size:1.35rem}.pgrid{grid-template-columns:1fr}.rpd{flex-direction:column;gap:4px}.ptotals{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+const R=[
+{id:"b1",cat:"bfast",name:"Batido verde manzana-espinaca",time:5,protT:32,protC:28,ing:["1 manzana roja pelada","Puñado de espinacas frescas","½ plátano","1 scoop whey isolate vainilla","200ml leche semidesnatada o kéfir"],steps:["Todo a la batidora.","30-40 segundos.","Si espeso, más leche."],tip:"Congela plátanos en rodajas: sustituyen al hielo.",shop:{prot:[],carb:[],veg:["manzana","espinacas frescas","plátano"],fat:[],other:["whey isolate","leche semidesnatada"]}},
+{id:"b2",cat:"bfast",name:"Batido plátano-kéfir",time:5,protT:35,protC:28,ing:["1 plátano maduro","200ml kéfir","1 scoop whey isolate","Miel (opcional)"],steps:["Todo a la batidora, 30 seg."],shop:{prot:[],carb:[],veg:["plátano"],fat:[],other:["kéfir","whey isolate"]}},
+{id:"b3",cat:"bfast",name:"Batido manzana-jengibre",time:5,protT:30,protC:25,ing:["1 manzana roja (Fuji o Gala)","200ml leche semidesnatada o kéfir","1 scoop whey isolate","Rodaja jengibre (1cm)","½ plátano congelado"],steps:["Todo a la batidora.","Poco jengibre, que pica."],shop:{prot:[],carb:[],veg:["manzana","plátano"],fat:[],other:["leche semidesnatada","whey isolate","jengibre"]}},
+{id:"b4",cat:"bfast",name:"Sandwich pollo + pesto",time:5,protT:35,protC:25,ing:["2 rebanadas pan integral tostado","80-100g pollo deshilachado (batch)","1 cda pesto","Tomate en rodajas","Rúcula"],steps:["Tuesta pan. Unta pesto.","Monta: pollo, tomate, rúcula."],tip:"Necesita pollo del batch. Sin batch: pavo lonchas.",shop:{prot:["pollo deshilachado"],carb:["pan integral"],veg:["tomate","rúcula"],fat:["pesto"],other:[]}},
+{id:"b5",cat:"bfast",name:"Tostadas aguacate + pavo + huevo",time:8,protT:30,protC:22,ing:["2 rebanadas pan integral","½ aguacate","3-4 lonchas pavo","1 huevo","Tomate, AOVE, sal"],steps:["Tuesta pan. Machaca aguacate.","Encima pavo, huevo, tomate. AOVE y sal."],shop:{prot:["huevos","pavo lonchas"],carb:["pan integral"],veg:["aguacate","tomate"],fat:["AOVE"],other:[]}},
+{id:"b6",cat:"bfast",name:"Huevos revueltos + tostada",time:8,protT:27,protC:18,ing:["2-3 huevos","1 rebanada pan integral","Tomate","AOVE, sal, pimienta"],steps:["Bate huevos. Sartén medio con AOVE.","Remueve suave. Fuera cuando cremosos.","Sobre tostada con tomate."],shop:{prot:["huevos"],carb:["pan integral"],veg:["tomate"],fat:["AOVE"],other:[]}},
+{id:"b7",cat:"bfast",name:"Sandwich tunacado",time:5,protT:35,protC:25,ing:["2 rebanadas pan integral tostado","1 lata atún en agua (escurrido)","½ aguacate machacado","1 cda pesto","Tomate en rodajas","Rúcula (opcional)"],steps:["Tuesta pan. Machaca aguacate en una cara, pesto en la otra.","Atún escurrido encima, tomate, rúcula.","Si sienta pesado a primera hora, reduce pesto o aguacate a la mitad."],tip:"Usa atún en agua, no en aceite. Con pesto y aguacate ya tienes grasa de sobra.",shop:{prot:["atún en lata"],carb:["pan integral"],veg:["aguacate","tomate","rúcula"],fat:["pesto"],other:[]}},
+{id:"q1",cat:"quick",name:"Salmón a la plancha + arroz + brócoli",time:15,protT:42,protC:28,ing:["2 filetes salmón (~350g)","Arroz del batch","1 cabeza brócoli","Ajo, AOVE, limón, sal"],steps:["Salmón en sartén caliente 4+3 min.","Brócoli al vapor o salteado con ajo.","Arroz del batch al micro. Limón sobre salmón."],tip:"Sin batch: cuscús en 5 min.",shop:{prot:["salmón"],carb:["arroz"],veg:["brócoli","ajo","limón"],fat:["AOVE"],other:[]}},
+{id:"q2",cat:"quick",name:"Pasta boloñesa express",time:20,protT:57,protC:36,ing:["300g carne picada","200g pasta de lentejas rojas","Tomate triturado","½ cebolla, 2 ajos","Orégano, sal, AOVE, queso rallado"],steps:["Hierve pasta (sácala 1-2 min antes, al dente).","Sofríe cebolla y ajo. Carne picada 5 min desmigando.","Tomate, orégano, 10 min. Mezcla con pasta."],shop:{prot:["carne picada"],carb:["pasta de lentejas"],veg:["tomate triturado","cebolla","ajo"],fat:["AOVE","queso rallado"],other:[]}},
+{id:"q3",cat:"quick",name:"Huevos rotos con pavo y patatas",time:15,protT:38,protC:25,ing:["4-6 huevos","3-4 patatas","Pavo lonchas (100g)","AOVE, sal"],steps:["Fríe patatas en gajos 10 min.","Pasa pavo por sartén.","Fríe huevos (T:3 C:2). Rompe yema."],shop:{prot:["huevos","pavo lonchas"],carb:["patatas"],veg:[],fat:["AOVE"],other:[]}},
+{id:"q4",cat:"quick",name:"Tortilla de patatas",time:20,protT:28,protC:18,ing:["6 huevos","3-4 patatas","½ cebolla","AOVE, sal"],steps:["Pocha patatas finas en AOVE 15 min.","Bate huevos, mezcla con patatas.","Sartén 3-4 min, voltea, 2-3 min más."],tip:"Lo que sobre: sandwich de desayuno.",shop:{prot:["huevos"],carb:["patatas"],veg:["cebolla"],fat:["AOVE"],other:[]}},
+{id:"q5",cat:"quick",name:"Bowl arroz + carne picada asiático",time:15,protT:48,protC:30,ing:["300g carne picada","Arroz del batch","Brócoli, zanahoria","2 huevos","Salsa soja, jengibre, ajo, sriracha"],steps:["Saltea carne con ajo y jengibre.","Salsa soja, brócoli tapado 3 min.","Huevos fritos. Bowl: arroz, carne, huevo, zanahoria, sriracha."],shop:{prot:["carne picada","huevos"],carb:["arroz"],veg:["brócoli","zanahoria","ajo"],fat:["salsa soja"],other:["jengibre","sriracha"]}},
+{id:"q6",cat:"quick",name:"Chuletas de sajonia + patatas",time:15,protT:42,protC:28,ing:["4 chuletas sajonia (~400g)","Patatas en gajos","Rúcula, tomate","AOVE, sal, mostaza"],steps:["Plancha caliente con AOVE. 3-4 min/lado, no pinchar.","Sirve con patatas y ensalada. Mostaza al lado."],tip:"Encárgalas en la carnicería del pueblo.",shop:{prot:["chuletas sajonia"],carb:["patatas"],veg:["rúcula","tomate"],fat:["AOVE","mostaza"],other:[]}},
+{id:"q7",cat:"quick",name:"Ensalada completa de atún",time:10,protT:38,protC:25,ing:["2-3 latas atún","2 huevos duros","Rúcula, espinacas frescas, tomate, cebolla","1 aguacate","AOVE, balsámico, mostaza"],steps:["Base de espinacas y rúcula. Atún, huevo, tomate, cebolla, aguacate.","Aliño: AOVE + balsámico + mostaza."],tip:"Cena ligera. Añade pan si entrenas.",shop:{prot:["atún en lata","huevos"],carb:[],veg:["rúcula","espinacas frescas","tomate","cebolla","aguacate"],fat:["AOVE","vinagre balsámico","mostaza"],other:[]}},
+{id:"q8",cat:"quick",name:"Pasta con pollo al pesto",time:15,protT:60,protC:38,ing:["400g pechuga en tiras","200g pasta de lentejas rojas","2-3 cdas pesto","Tomate troceado, rúcula, ajo","Queso rallado, AOVE"],steps:["Hierve pasta (al dente, no pasar de cocción).","Saltea pollo con ajo 5-6 min.","Mezcla pasta, pollo, pesto, tomate troceado.","Rúcula y queso al emplatar."],shop:{prot:["pechuga pollo"],carb:["pasta de lentejas"],veg:["tomate","rúcula","ajo"],fat:["pesto","queso rallado","AOVE"],other:[]}},
+{id:"e1",cat:"elab",name:"Pollo al horno con patatas y pimientos",time:45,protT:50,protC:35,ing:["500g pollo","3-4 patatas en gajos","2 pimientos rojos","1 cebolla","AOVE, pimentón, ajo en polvo, sal"],steps:["Horno 200°C. Todo en bandeja.","Aliña con AOVE, pimentón, ajo, sal.","35-40 min."],tip:"Tiempo activo: 10 min. El horno hace el resto.",shop:{prot:["pollo"],carb:["patatas"],veg:["pimiento rojo","cebolla"],fat:["AOVE"],other:[]}},
+{id:"e2",cat:"elab",name:"Salmón al horno con verduras",time:30,protT:42,protC:28,ing:["2 filetes salmón","Brócoli, zanahoria, cebolla","AOVE, limón, perejil, sal","Patatas finas (opcional)"],steps:["Horno 200°C. Verduras en bandeja 15 min.","Salmón encima con limón y hierbas.","12-15 min más."],shop:{prot:["salmón"],carb:["patatas"],veg:["brócoli","zanahoria","cebolla","limón"],fat:["AOVE"],other:[]}},
+{id:"e3",cat:"elab",name:"Curry de pollo con arroz",time:30,protT:48,protC:30,ing:["400g pechuga en dados","200ml nata de cocinar","2 cdas curry","Cebolla, ajo, jengibre","Arroz, AOVE, sal"],steps:["Sofríe cebolla, ajo, curry, jengibre.","Pollo en dados 5 min.","Nata de cocinar, tapa, 15 min suave. Con arroz."],tip:"Con nata queda tipo tikka masala. Igual de bueno.",shop:{prot:["pechuga pollo"],carb:["arroz"],veg:["cebolla","ajo"],fat:["AOVE","nata de cocinar"],other:["curry","jengibre"]}},
+{id:"e4",cat:"elab",name:"Secreto ibérico con patatas asadas",time:35,protT:48,protC:32,ing:["2 secretos ibéricos (~400g)","Patatas en gajos","Ensalada verde","Sal gorda, pimienta"],steps:["Patatas al horno 25 min con AOVE.","Sartén muy caliente sin aceite. Sal gorda.","3-4 min/lado, rosado por dentro. Reposa 2 min."],tip:"Pieza premium de la carnicería.",shop:{prot:["secreto ibérico"],carb:["patatas"],veg:["rúcula","tomate"],fat:["AOVE"],other:[]}},
+{id:"e5",cat:"elab",name:"Lomo adobado con patatas y pimientos",time:25,protT:50,protC:32,ing:["400g lomo adobado","3-4 patatas en rodajas","1 pimiento rojo","1 cebolla en aros","AOVE, sal"],steps:["Pocha patatas en AOVE 12-15 min.","Plancha caliente: lomo 2-3 min/lado.","Saltea pimiento y cebolla 5 min."],tip:"Ya viene marinado de la carnicería. Cero esfuerzo.",shop:{prot:["lomo adobado"],carb:["patatas"],veg:["pimiento rojo","cebolla"],fat:["AOVE"],other:[]}},
+{id:"e6",cat:"elab",name:"Solomillo cerdo en salsa mostaza",time:30,protT:52,protC:35,ing:["1 solomillo cerdo (~450g)","2 cdas mostaza Dijon","100ml nata cocinar","Ajo, AOVE, sal, pimienta","Patatas o arroz"],steps:["Medallones 2-3cm, salpimenta.","Sella 2 min/lado. Reserva.","Misma sartén: ajo, mostaza, nata 2 min.","Devuelve medallones, 3-4 min suave."],tip:"Plato de restaurante en 30 min.",shop:{prot:["solomillo cerdo"],carb:["patatas"],veg:["ajo"],fat:["AOVE","mostaza","nata cocinar"],other:[]}},
+{id:"c1",cat:"cheat",name:"Hamburguesas caseras",time:20,protT:52,protC:35,ing:["300-400g carne picada","2 panes hamburguesa","2 lonchas cheddar","Espinacas frescas, tomate, cebolla","Ketchup, mostaza","Patatas"],steps:["Forma burgers (T:200g C:130g) con sal y mostaza.","Sartén caliente 3-4 min/lado. Cheddar al voltear.","Tuesta panes. Monta con todo."],tip:"Cheat meal con ~45g prot.",shop:{prot:["carne picada","cheddar"],carb:["pan hamburguesa","patatas"],veg:["espinacas frescas","tomate","cebolla"],fat:["ketchup","mostaza"],other:[]}},
+{id:"c2",cat:"cheat",name:"Pizza casera",time:20,protT:35,protC:22,ing:["2 bases pizza","Tomate triturado","2 bolas mozzarella","Toppings: jamón, atún, pimiento, rúcula","AOVE, orégano"],steps:["Horno máximo (220-250°C).","Tomate, mozzarella, toppings.","10-12 min. Rúcula y AOVE al sacar."],tip:"Más proteína: atún o pollo deshilachado como topping.",shop:{prot:["mozzarella","atún en lata"],carb:["base pizza"],veg:["tomate triturado","rúcula"],fat:["AOVE"],other:[]}},
+{id:"c3",cat:"cheat",name:"Nachos con carne y queso",time:15,protT:38,protC:25,ing:["200g carne picada","Nachos/tortilla chips","Cheddar rallado","1 aguacate","Tomate, cebolla, comino, soja, limón"],steps:["Saltea carne con comino, pimentón, soja, ajo.","Nachos en bandeja, carne, cheddar. Grill 3-4 min.","Guacamole: aguacate + tomate + cebolla + limón."],shop:{prot:["carne picada","cheddar"],carb:["nachos"],veg:["aguacate","tomate","cebolla"],fat:["salsa soja"],other:["comino"]}}
+];
+
+const CATS={bfast:"Desayuno",quick:"Rápida",elab:"Elaborada",cheat:"Cheat"};
+const DAYS=["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
+const BFAST=[0,1,2,3,4];
+const LUNCH=[2,4,5,6];
+const DINNER=[0,1,2,3,4,5,6];
+const OFFICE_LUNCH=[0,1,3];
+const SNACK_T=20,SNACK_C=10;
+const OFFICE_T=45,OFFICE_C=30;
+let view="recipes",plan=null;
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function pick(arr,n,ex=[]){return shuffle(arr.filter(r=>!ex.includes(r.id))).slice(0,n)}
+
+function generatePlan(){
+const bf=pick(R.filter(r=>r.cat==="bfast"),5);
+const mains=R.filter(r=>r.cat!=="bfast");
+const din=pick(mains,7);
+const lun=pick(mains,4,din.map(r=>r.id));
+plan={b:{},l:{},d:{}};
+BFAST.forEach((d,i)=>{plan.b[d]=bf[i%bf.length]});
+LUNCH.forEach((d,i)=>{plan.l[d]=lun[i%lun.length]});
+DINNER.forEach((d,i)=>{plan.d[d]=din[i]});
+}
+
+function swapMeal(t,d){
+const cat=t==="b"?"bfast":null;
+const pool=cat?R.filter(r=>r.cat===cat):R.filter(r=>r.cat!=="bfast");
+const used=[...Object.values(plan.b),...Object.values(plan.l),...Object.values(plan.d)].map(r=>r.id);
+const avail=pool.filter(r=>!used.includes(r.id));
+plan[t][d]=(avail.length>0?avail:pool)[Math.floor(Math.random()*(avail.length||pool.length))];
+render();
+}
+
+const QTY={
+"pechuga pollo":{per:400,u:"g",fmt:g=>g>=1000?(g/1000).toFixed(1)+"kg":g+"g"},
+"pollo deshilachado":{per:150,u:"g",fmt:g=>g+"g"},
+"salmón":{per:2,u:"",fmt:n=>n+" filetes"},
+"carne picada":{per:300,u:"g",fmt:g=>g>=1000?(g/1000).toFixed(1)+"kg":g+"g"},
+"secreto ibérico":{per:400,u:"g",fmt:g=>g+"g"},
+"lomo adobado":{per:400,u:"g",fmt:g=>g+"g"},
+"solomillo cerdo":{per:450,u:"g",fmt:g=>g+"g"},
+"chuletas sajonia":{per:400,u:"g",fmt:g=>g+"g"},
+"gambas peladas":{per:400,u:"g",fmt:g=>g+"g"},
+"huevos":{per:4,u:"",fmt:n=>n+" huevos"},
+"pavo lonchas":{per:100,u:"g",fmt:g=>g+"g"},
+"atún en lata":{per:2,u:"",fmt:n=>n+" latas"},
+"cheddar":{per:2,u:"",fmt:n=>n+" lonchas"},
+"mozzarella":{per:1,u:"",fmt:n=>n+(n>1?" bolas":" bola")},
+"queso rallado":{per:1,u:"",fmt:n=>n>1?"2 bolsas":"1 bolsa"},
+"pan integral":{per:2,u:"",fmt:n=>Math.ceil(n/6)+(Math.ceil(n/6)>1?" bolsas":" bolsa")},
+"pasta de lentejas":{per:200,u:"g",fmt:g=>g+"g"},
+"arroz":{per:150,u:"g",fmt:g=>g+"g"},
+"patatas":{per:3,u:"",fmt:n=>n+" patatas (del saco)"},
+"pan hamburguesa":{per:2,u:"",fmt:n=>n+" panes"},
+"base pizza":{per:2,u:"",fmt:n=>n+" bases"},
+"nachos":{per:1,u:"",fmt:()=>"1 bolsa"},
+"tomate":{per:2,u:"",fmt:n=>n+" tomates"},
+"tomate triturado":{per:1,u:"",fmt:n=>n>1?n+" bricks":"1 brick"},
+"rúcula":{per:1,u:"",fmt:n=>n>2?Math.ceil(n/2)+" bolsas":n+(n>1?" bolsas":" bolsa")},
+"espinacas frescas":{per:1,u:"",fmt:n=>n>2?"2 bolsas":"1 bolsa"},
+"cebolla":{per:1,u:"",fmt:n=>n+(n>1?" cebollas":" cebolla")},
+"aguacate":{per:1,u:"",fmt:n=>n+" aguacates"},
+"brócoli":{per:1,u:"",fmt:n=>n>2?"2 cabezas":"1 cabeza"},
+"pimiento rojo":{per:1,u:"",fmt:n=>n+" pimientos"},
+"zanahoria":{per:1,u:"",fmt:n=>n+" zanahorias"},
+"ajo":{per:2,u:"",fmt:n=>"1 cabeza"},
+"limón":{per:1,u:"",fmt:n=>n+" limones"},
+"manzana":{per:1,u:"",fmt:n=>n+" manzanas"},
+"plátano":{per:1,u:"",fmt:n=>n+" plátanos"},
+"AOVE":{per:1,u:"",fmt:()=>"siempre en casa"},
+"pesto":{per:1,u:"",fmt:n=>n>2?"2 botes":"1 bote"},
+"salsa soja":{per:1,u:"",fmt:()=>"1 botella"},
+"vinagre balsámico":{per:1,u:"",fmt:()=>"1 botella"},
+"mostaza":{per:1,u:"",fmt:()=>"1 bote"},
+"ketchup":{per:1,u:"",fmt:()=>"1 bote"},
+"nata de cocinar":{per:1,u:"",fmt:()=>"1 brick"},
+"sriracha":{per:1,u:"",fmt:()=>"1 botella"},
+"jengibre":{per:1,u:"",fmt:()=>"1 trozo"},
+"curry":{per:1,u:"",fmt:()=>"1 bote"},
+"comino":{per:1,u:"",fmt:()=>"en especiero"},
+"whey isolate":{per:1,u:"",fmt:()=>"bote (ya lo tienes)"},
+"leche semidesnatada":{per:200,u:"ml",fmt:ml=>ml>=1000?(ml/1000).toFixed(1)+"L":ml+"ml"},
+"kéfir":{per:200,u:"ml",fmt:()=>"1L"}
+};
+
+function getShopList(){
+if(!plan)return{};
+const all=[...Object.values(plan.b),...Object.values(plan.l),...Object.values(plan.d)];
+const agg={prot:{},carb:{},veg:{},fat:{},other:{}};
+all.forEach(r=>{if(!r.shop)return;Object.keys(agg).forEach(c=>{(r.shop[c]||[]).forEach(item=>{agg[c][item]=(agg[c][item]||0)+1})})});
+return agg;
+}
+
+function fmtShopItem(name,count){
+const q=QTY[name];
+if(!q)return name+" ×"+count;
+const total=q.per*count;
+return name+" — "+q.fmt(total);
+}
+
+function rCard(r){
+return`<div class="recipe" data-cat="${r.cat}">
+<div class="rh" onclick="this.closest('.recipe').classList.toggle('open')">
+<span class="rtag rtag-${r.cat} mono">${CATS[r.cat]}</span>
+<span class="rn">${r.name}</span>
+<div class="rm"><span class="rt mono">${r.time}m</span><span class="rp mono">${r.protT}g</span></div>
+<span class="ra">›</span></div>
+<div class="rb">
+<div class="rs"><div class="rl">Ingredientes (2 pers.)</div><ul class="rlist">${r.ing.map(i=>`<li>${i}</li>`).join("")}</ul></div>
+<div class="rs"><div class="rl">Preparación</div><ol class="rlist rsteps">${r.steps.map(s=>`<li>${s}</li>`).join("")}</ol></div>
+<div class="rpd"><div><div class="pn">Tomás</div><div class="pv">~${r.protT}g</div></div><div><div class="pn">Claudia</div><div class="pv">~${r.protC}g</div></div></div>
+${r.tip?`<div class="rtip">${r.tip}</div>`:""}</div></div>`}
+
+function renderRecipes(){
+return`<div class="filters">
+<button class="fbtn active" onclick="fCat(this,'all')">Todas (${R.length})</button>
+<button class="fbtn" onclick="fCat(this,'bfast')">Desayuno</button>
+<button class="fbtn" onclick="fCat(this,'quick')">Rápidas</button>
+<button class="fbtn" onclick="fCat(this,'elab')">Elaboradas</button>
+<button class="fbtn" onclick="fCat(this,'cheat')">Cheat</button></div>
+${R.map(r=>rCard(r)).join("")}
+<div class="pantry"><h3>🗄️ Capsule Pantry</h3><p>Estos ingredientes cubren todas las recetas.</p>
+<div class="pgrid"><div class="pcol"><h4>Proteínas</h4><ul><li>Pechuga pollo</li><li>Salmón</li><li>Carne picada ternera</li><li>Lomo adobado</li><li>Chuletas sajonia</li><li>Solomillo cerdo</li><li>Secreto ibérico</li><li>Huevos</li><li>Atún en lata</li><li>Pavo lonchas</li></ul>
+<h4>Carbos</h4><ul><li>Arroz, pasta de lentejas rojas</li><li>Pan integral</li><li>Patatas (saco)</li><li>Pan hamburguesa</li><li>Base pizza, nachos</li></ul></div>
+<div class="pcol"><h4>Verdura y fruta</h4><ul><li>Brócoli</li><li>Espinacas frescas (ensaladas + batidos)</li><li>Tomates</li><li>Rúcula</li><li>Cebollas, pimientos</li><li>Zanahorias, aguacates</li><li>Manzanas rojas (Fuji/Gala), plátanos, limones</li></ul>
+<h4>Despensa</h4><ul><li>AOVE, pesto, salsa soja</li><li>Tomate triturado</li><li>Vinagre balsámico, mostaza</li><li>Ketchup, sriracha</li><li>Nata de cocinar</li><li>Ajo, jengibre</li><li>Especias varias</li><li>Whey isolate, kéfir</li><li>Leche semidesnatada</li><li>Quesos: rallado, cheddar, mozz</li></ul></div></div></div>`}
+
+function renderPlanner(){
+if(!plan)generatePlan();
+const SH=getShopList();
+let tT=0,tC=0;
+[plan.b,plan.l,plan.d].forEach(m=>Object.values(m).forEach(r=>{tT+=r.protT;tC+=r.protC}));
+tT+=OFFICE_LUNCH.length*OFFICE_T+7*SNACK_T;
+tC+=OFFICE_LUNCH.length*OFFICE_C+7*SNACK_C;
+
+let h=`<button class="gen-btn" onclick="generatePlan();render()">🎲 Generar nueva semana</button>
+<div class="ptotals"><div class="pt"><div class="ptv mono">${Math.round(tT/7)}g/día</div><div class="ptl">Prot. media Tomás</div></div>
+<div class="pt"><div class="ptv mono">${Math.round(tC/7)}g/día</div><div class="ptl">Prot. media Claudia</div></div></div>`;
+
+DAYS.forEach((d,i)=>{
+let dT=SNACK_T,dC=SNACK_C,ms="";
+const isOffice=OFFICE_LUNCH.includes(i);
+if(isOffice){dT+=OFFICE_T;dC+=OFFICE_C}
+const ml=[
+[BFAST.includes(i)&&plan.b[i],"Desayuno","var(--bfast)","b"],
+[LUNCH.includes(i)&&plan.l[i],"Comida","var(--elab)","l"],
+[DINNER.includes(i)&&plan.d[i],"Cena","var(--quick)","d"]];
+ml.forEach(([r,label,col,t])=>{if(r){dT+=r.protT;dC+=r.protC;
+ms+=`<div class="pm"><span class="pmt mono" style="color:${col}">${label}</span><span class="pmn">${r.name}</span><span class="pmp mono">${r.protT}g</span><button class="pms" onclick="swapMeal('${t}',${i})">↻</button></div>`}});
+if(isOffice){ms+=`<div class="pm" style="opacity:.6"><span class="pmt mono" style="color:var(--elab)">Oficina</span><span class="pmn">Menú del día</span><span class="pmp mono">${OFFICE_T}g</span></div>`}
+ms+=`<div class="pm" style="opacity:.5"><span class="pmt mono" style="color:var(--dim)">Snacks</span><span class="pmn">Natillas/yogur proteico</span><span class="pmp mono">${SNACK_T}g</span></div>`;
+const ok=dT>=150?"var(--accent)":"var(--cheat)";
+h+=`<div class="pday"><div class="pdh"><span class="dn">${d}</span><span class="dp mono" style="color:${ok}">T:${dT}g · C:${dC}g</span></div>${ms}</div>`});
+
+h+=`<div class="shop"><h3>🛒 Lista de compra · 2 personas</h3>`;
+const CN={prot:"🥩 Proteínas",carb:"🍚 Carbos",veg:"🥬 Verdura y fruta",fat:"🫒 Salsas y grasas",other:"📦 Otros"};
+Object.entries(SH).forEach(([c,items])=>{const e=Object.entries(items);if(!e.length)return;
+h+=`<div class="scat"><h4>${CN[c]}</h4><ul>${e.map(([n,ct])=>`<li>${fmtShopItem(n,ct)}</li>`).join("")}</ul></div>`});
+h+=`<div class="sbase"><b>Siempre en casa:</b> AOVE · sal yodada · pimienta · ajo · huevos (2 docenas) · arroz · pasta de lentejas · patatas del saco · pan integral · whey isolate · kéfir · leche semidesnatada · yogur griego/Skyr · almendras · especias</div></div>`;
+return h;
+}
+
+function render(){
+const a=document.getElementById("app");
+let h=`<header><h1>Recetas · Capsule Pantry</h1><p>Ingredientes reutilizables · Proteína por persona</p></header>
+<div class="tabs"><div class="tab${view==="recipes"?" active":""}" onclick="view='recipes';render()">📖 Recetas</div>
+<div class="tab${view==="planner"?" active":""}" onclick="view='planner';render()">📅 Semana</div></div>`;
+h+=view==="recipes"?renderRecipes():renderPlanner();
+h+=`<footer>Capsule Pantry · Tomás 90kg · Claudia 55kg · 2026</footer>`;
+a.innerHTML=h;window.scrollTo(0,0);
+}
+
+window.fCat=function(el,c){document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));el.classList.add('active');
+document.querySelectorAll('.recipe').forEach(r=>{if(c==='all'||r.dataset.cat===c)r.classList.remove('hidden');else{r.classList.add('hidden');r.classList.remove('open')}})};
+window.swapMeal=swapMeal;window.generatePlan=generatePlan;
+render();
+</script>
+</body>
+</html>
