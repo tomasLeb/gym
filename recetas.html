@@ -94,9 +94,10 @@ footer{text-align:center;padding:28px 0 16px;font-size:.68rem;color:var(--dim);f
 <div class="app" id="app"></div>
 <script>
 const R=[
-{id:"b1",cat:"bfast",name:"Batido verde manzana-espinaca",time:5,protT:32,protC:28,ing:["1 manzana roja pelada","Puñado de espinacas frescas","½ plátano","1 scoop whey isolate vainilla","200ml leche semidesnatada o kéfir"],steps:["Todo a la batidora.","30-40 segundos.","Si espeso, más leche."],tip:"Congela plátanos en rodajas: sustituyen al hielo.",shop:{prot:[],carb:[],veg:["manzana","espinacas frescas","plátano"],fat:[],other:["whey isolate","leche semidesnatada"]}},
+{id:"b1",cat:"bfast",name:"Batido fresas-arandanos",time:5,protT:32,protC:28,ing:["1 taza fresas (frescas o congeladas)","½ taza arándanos azules (frescos o congelados)","1 plátano","200ml kéfir","1 scoop whey isolate vainilla"],steps:["Todo a la batidora, 30-40 seg.","Las frutas congeladas sustituyen al hielo."],tip:"Compra fresas y arándanos frescos, congela la mitad en bolsa zip. Duran meses.",shop:{prot:[],carb:[],veg:["fresas","arándanos","plátano"],fat:[],other:["kéfir","whey isolate"]}},
 {id:"b2",cat:"bfast",name:"Batido plátano-kéfir",time:5,protT:35,protC:28,ing:["1 plátano maduro","200ml kéfir","1 scoop whey isolate","Miel (opcional)"],steps:["Todo a la batidora, 30 seg."],shop:{prot:[],carb:[],veg:["plátano"],fat:[],other:["kéfir","whey isolate"]}},
-{id:"b3",cat:"bfast",name:"Batido manzana-jengibre",time:5,protT:30,protC:25,ing:["1 manzana roja (Fuji o Gala)","200ml leche semidesnatada o kéfir","1 scoop whey isolate","Rodaja jengibre (1cm)","½ plátano congelado"],steps:["Todo a la batidora.","Poco jengibre, que pica."],shop:{prot:[],carb:[],veg:["manzana","plátano"],fat:[],other:["leche semidesnatada","whey isolate","jengibre"]}},
+{id:"b3",cat:"bfast",name:"Batido cacahuete-espinacas",time:5,protT:35,protC:28,ing:["1 plátano maduro","1 puñado espinacas frescas","1 cda mantequilla de cacahuete","200ml leche semidesnatada o kéfir","1 scoop whey isolate vainilla"],steps:["Todo a la batidora, 30 seg.","El cacahuete + plátano + whey vainilla sabe a Snickers líquido. Las espinacas no se notan."],tip:"Extra de magnesio y vitamina E que faltan en el recetario.",shop:{prot:[],carb:[],veg:["plátano","espinacas frescas"],fat:["mantequilla de cacahuete"],other:["leche semidesnatada","whey isolate"]}},
+{id:"b3b",cat:"bfast",name:"Batido fresas-platano",time:5,protT:32,protC:28,ing:["1 taza fresas (frescas o congeladas)","1 plátano","200ml kéfir","1 scoop whey isolate vainilla"],steps:["Todo a la batidora, 30 seg.","Fresas congeladas van directas, sin descongelar."],shop:{prot:[],carb:[],veg:["fresas","plátano"],fat:[],other:["kéfir","whey isolate"]}},
 {id:"b4",cat:"bfast",name:"Sandwich pollo + pesto",time:5,protT:35,protC:25,ing:["2 rebanadas pan integral tostado","80-100g pollo deshilachado (batch)","1 cda pesto","Tomate en rodajas","Rúcula"],steps:["Tuesta pan. Unta pesto.","Monta: pollo, tomate, rúcula."],tip:"Necesita pollo del batch. Sin batch: pavo lonchas.",shop:{prot:["pollo deshilachado"],carb:["pan integral"],veg:["tomate","rúcula"],fat:["pesto"],other:[]}},
 {id:"b5",cat:"bfast",name:"Tostadas aguacate + pavo + huevo",time:8,protT:30,protC:22,ing:["2 rebanadas pan integral","½ aguacate","3-4 lonchas pavo","1 huevo","Tomate, AOVE, sal"],steps:["Tuesta pan. Machaca aguacate.","Encima pavo, huevo, tomate. AOVE y sal."],shop:{prot:["huevos","pavo lonchas"],carb:["pan integral"],veg:["aguacate","tomate"],fat:["AOVE"],other:[]}},
 {id:"b6",cat:"bfast",name:"Huevos revueltos + tostada",time:8,protT:27,protC:18,ing:["2-3 huevos","1 rebanada pan integral","Tomate","AOVE, sal, pimienta"],steps:["Bate huevos. Sartén medio con AOVE.","Remueve suave. Fuera cuando cremosos.","Sobre tostada con tomate."],shop:{prot:["huevos"],carb:["pan integral"],veg:["tomate"],fat:["AOVE"],other:[]}},
@@ -189,6 +190,8 @@ const QTY={
 "limón":{per:1,u:"",fmt:n=>n+" limones"},
 "manzana":{per:1,u:"",fmt:n=>n+" manzanas"},
 "plátano":{per:1,u:"",fmt:n=>n+" plátanos"},
+"fresas":{per:1,u:"",fmt:n=>n>1?"2 bandejas":"1 bandeja"},
+"arándanos":{per:1,u:"",fmt:n=>"1 bandeja"},
 "AOVE":{per:1,u:"",fmt:()=>"siempre en casa"},
 "pesto":{per:1,u:"",fmt:n=>n>2?"2 botes":"1 bote"},
 "salsa soja":{per:1,u:"",fmt:()=>"1 botella"},
@@ -244,7 +247,7 @@ ${R.map(r=>rCard(r)).join("")}
 <div class="pantry"><h3>🗄️ Capsule Pantry</h3><p>Estos ingredientes cubren todas las recetas.</p>
 <div class="pgrid"><div class="pcol"><h4>Proteínas</h4><ul><li>Pechuga pollo</li><li>Salmón</li><li>Carne picada ternera</li><li>Lomo adobado</li><li>Chuletas sajonia</li><li>Solomillo cerdo</li><li>Secreto ibérico</li><li>Huevos</li><li>Atún en lata</li><li>Pavo lonchas</li></ul>
 <h4>Carbos</h4><ul><li>Arroz, pasta de lentejas rojas</li><li>Pan integral</li><li>Patatas (saco)</li><li>Pan hamburguesa</li><li>Base pizza, nachos</li></ul></div>
-<div class="pcol"><h4>Verdura y fruta</h4><ul><li>Brócoli</li><li>Espinacas frescas (ensaladas + batidos)</li><li>Tomates</li><li>Rúcula</li><li>Cebollas, pimientos</li><li>Zanahorias, aguacates</li><li>Manzanas rojas (Fuji/Gala), plátanos, limones</li></ul>
+<div class="pcol"><h4>Verdura y fruta</h4><ul><li>Brócoli</li><li>Espinacas frescas (ensaladas + batidos)</li><li>Tomates</li><li>Rúcula</li><li>Cebollas, pimientos</li><li>Zanahorias, aguacates</li><li>Fresas, arándanos azules (batidos + postre)</li><li>Plátanos, manzanas, limones</li></ul>
 <h4>Despensa</h4><ul><li>AOVE, pesto, salsa soja</li><li>Tomate triturado</li><li>Vinagre balsámico, mostaza</li><li>Ketchup, sriracha</li><li>Nata de cocinar</li><li>Ajo, jengibre</li><li>Especias varias</li><li>Whey isolate, kéfir</li><li>Leche semidesnatada</li><li>Quesos: rallado, cheddar, mozz</li></ul></div></div></div>`}
 
 function renderPlanner(){
